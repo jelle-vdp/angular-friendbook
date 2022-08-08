@@ -1,0 +1,92 @@
+<main [ngSwitch]="displayView">
+  <h1>{{title}}</h1>
+  <section class="view-friends" *ngSwitchCase="'displayAllFriends'">
+    <div *ngFor="let friend of allFriends" class="view-friends-wrapper">
+      <ul>
+        <li>First name: <b>{{friend.firstName}}</b></li>
+        <li>Last name: <b>{{friend.lastName}}</b></li>
+        <li>Email: <b>{{friend.email}}</b></li>
+        <li>Phonenumber: <b>{{friend.phoneNumber}}</b></li>
+        <li>Favourite coding language: <b>{{friend.favouriteLanguage}}</b></li>
+      </ul>
+      <i (click)="deleteFriend(friend.id)" class="fa-solid fa-xmark"></i>
+    </div>
+  </section>
+  <form *ngSwitchCase="'displayAddForm'" #formName="ngForm" (ngSubmit)="addNewFriend()">
+    <label for="firstname">First name</label>
+    <input 
+      type="text" 
+      name="firstName" 
+      id="firstname" 
+      [(ngModel)]="newFriend.firstName"
+      required
+      #firstName="ngModel"
+      [ngClass]="{'error' : firstName.invalid && firstName.touched}"
+    >
+    <p 
+      class="error-msg--empty" 
+      *ngIf="firstName.invalid && firstName.touched">Fill in your first name</p>
+    <label for="lastname">Last name</label>
+    <input 
+      type="text" 
+      name="lastName" 
+      id="lastname" 
+      #lastName="ngModel" 
+      [(ngModel)]="newFriend.lastName"
+      required
+      [ngClass]="{'error' : lastName.invalid && lastName.touched}"
+    >
+    <p 
+      class="error-msg--empty" 
+      *ngIf="lastName.invalid && lastName.touched">Fill in your last name</p>
+    <label for="email">Email</label>
+    <input 
+      type="email" 
+      name="email" 
+      id="email" 
+      #email="ngModel" 
+      [(ngModel)]="newFriend.email"
+      required
+      [ngClass]="{'error' : email.invalid && email.touched}"
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+    >
+    <p 
+      class="error-msg--pattern" 
+      *ngIf="email.errors?.['pattern'] && email.touched">This isn't a valid e-mailadress</p>
+    <p 
+      class="error-msg--empty" 
+      *ngIf="!email.errors?.['pattern'] && email.touched && email.invalid">Fill in your e-mailadress</p>
+    <label for="phonenumber">Phonenumber</label>
+    <input 
+      type="text" 
+      name="phoneNumber" 
+      id="phonenumber" 
+      #phoneNumber="ngModel" 
+      [(ngModel)]="newFriend.phoneNumber"
+      required
+      [ngClass]="{'error' : phoneNumber.invalid && phoneNumber.touched}"
+      pattern = "^(((\+|00)32[ ]?(?:\(0\)[ ]?)?)|0){1}(4(60|[789]\d)\/?(\s?\d{2}\.?){2}(\s?\d{2})|(\d\/?\s?\d{3}|\d{2}\/?\s?\d{2})(\.?\s?\d{2}){2})$"
+    > 
+    <p 
+      class="error-msg--pattern" 
+      *ngIf="phoneNumber.errors?.['pattern'] && phoneNumber.touched">This isn't a valid phonenumber
+    </p>
+    <p 
+      class="error-msg--empty" 
+      *ngIf="!phoneNumber.errors?.['pattern'] && phoneNumber.touched && phoneNumber.invalid">Fill in your phonenumber
+    </p>
+    <label for="favourite-language">Favourite language</label>
+    <select 
+      id="favourite-language" 
+      name="favouriteLanguage" 
+      [(ngModel)]="newFriend.favouriteLanguage"
+      required
+    >
+      <option *ngFor="let favLang of favouriteLanguages;" value="{{favLang}}">{{favLang}}</option>
+    </select>
+    <button [disabled]="formName.form.invalid" novalidate>Submit</button>
+  </form>
+  
+  <button *ngSwitchCase="'displayAddForm'" (click)="displayAllFriendsView()">Display all friends</button>
+  <button *ngSwitchCase="'displayAllFriends'" (click)="displayAddFormView()">Add new friend</button>
+</main>
